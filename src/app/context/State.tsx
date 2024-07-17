@@ -1,7 +1,7 @@
 "use client";
 import { createContext, ReactNode, useState } from "react";
 
-type state = {
+export type State = {
   play: boolean;
   difficulty: number;
   score: number;
@@ -12,8 +12,8 @@ type state = {
 };
 
 type stateContextType = {
-  state: state;
-  setState: (state: state) => void;
+  state: State;
+  setState: React.Dispatch<React.SetStateAction<State>>;
 };
 
 const StateContext = createContext({} as stateContextType);
@@ -25,9 +25,9 @@ export default function StateProvider({ children}:{children:ReactNode }) {
     score: 0,
     menu: true,
     credits: false,
-    words:[],
+    words:[""],
     keyboard:true
-  } as state);
+  });
   return (
     <StateContext.Provider value={{ state, setState }}>
       {children}
