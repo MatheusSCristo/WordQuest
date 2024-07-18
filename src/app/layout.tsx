@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Irish_Grover } from "next/font/google";
-import StateProvider from "./context/State";
+import ContextProvider from "./context/ContextProvider";
 import "./globals.css";
 
 const irish = Irish_Grover({ weight: ["400"], subsets: ["latin"] });
@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className={irish.className}>
-      <StateProvider>{children}</StateProvider>
+      <ContextProvider>{children}</ContextProvider>
       </body>
     </html>
   );

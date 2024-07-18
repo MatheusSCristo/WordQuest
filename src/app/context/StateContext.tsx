@@ -1,4 +1,3 @@
-"use client";
 import { createContext, ReactNode, useEffect, useState } from "react";
 
 export type State = {
@@ -19,15 +18,16 @@ type stateContextType = {
 const StateContext = createContext({} as stateContextType);
 
 export default function StateProvider({ children }: { children: ReactNode }) {
-  const getLocalStorageState = () => {
+  const getSessionStorage = () => {
     if (typeof window !== "undefined") {
-      const localState = localStorage.getItem("state");
+      const localState = sessionStorage.getItem("state");
       if (localState) {
         return {
           ...JSON.parse(localState),
           keyboard: true,
           play: false,
           menu: true,
+          words:[]
         };
       }
     }
@@ -42,11 +42,11 @@ export default function StateProvider({ children }: { children: ReactNode }) {
     };
   };
 
-  const [state, setState] = useState(getLocalStorageState());
+  const [state, setState] = useState(getSessionStorage());
 
   useEffect(() => {
     if (typeof window !== "undefined")
-      localStorage.setItem("state", JSON.stringify(state));
+      sessionStorage.setItem("state", JSON.stringify(state));
   }, [state]);
 
   return (

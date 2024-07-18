@@ -1,5 +1,5 @@
 "use client";
-import { StateContext } from "@/app/context/State";
+import { StateContext } from "@/app/context/StateContext";
 import { motion, useAnimationControls } from "framer-motion";
 import { useContext } from "react";
 

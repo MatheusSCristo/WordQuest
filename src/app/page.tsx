@@ -2,7 +2,7 @@
 import { useContext } from "react";
 import Home from "./Components/Home";
 import Play from "./Components/Play";
-import { StateContext } from "./context/State";
+import { StateContext } from "./context/StateContext";
 export default function App() {
   const {state}=useContext(StateContext);
   

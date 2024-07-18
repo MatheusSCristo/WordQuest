@@ -1,6 +1,6 @@
 "use client";
 
-import { State, StateContext } from "@/app/context/State";
+import { State, StateContext } from "@/app/context/StateContext";
 import words from "@/util/words";
 import {
   Dispatch,
@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 
+import { KeysContext } from "@/app/context/KeysContext";
 import { motion, useAnimationControls } from "framer-motion";
 
 const difficultyRows: {
@@ -35,8 +36,24 @@ const LetterRow = ({
 }) => {
   const controller = useAnimationControls();
   const { state, setState } = useContext(StateContext);
+  const { keys, setKeys } = useContext(KeysContext);
   const [hits, setHits] = useState([] as number[]);
   const { words: wordsWritten } = state;
+
+  const changeKeys = (
+    prevState: typeof keys,
+    letter: string,
+    type: 0 | 1 | 2
+  ) => {
+    const newKeys = [...prevState];
+    const index = newKeys.findIndex((item) => item.key === letter);
+    if (index != -1) {
+      newKeys[index].type = type;
+      return;
+    }
+    setKeys((prevState) => [...prevState, { key: letter, type: type }]);
+    return;
+  };
 
   const restartOnWordRight = () => {
     controller.start("animate");
@@ -49,11 +66,12 @@ const LetterRow = ({
       setHits([]);
       setState((prevState) => ({
         ...prevState,
-        score: state.score + 1,
+        score: state.score + state.difficulty,
         words: [],
         keyboard: true,
       }));
       setSelectedWord(words[Math.floor(Math.random() * words.length)]);
+      setKeys([]);
       return () => clearTimeout(timetout);
     }, 2000);
   };
@@ -62,13 +80,16 @@ const LetterRow = ({
     const writtenWord = wordsWritten[index].split("");
     const selectedWord = word.split("");
     writtenWord.forEach((letter, i) => {
-      if (!selectedWord.includes(writtenWord[i].toLowerCase())) {
+      if (!selectedWord.includes(letter.toLowerCase())) {
         setHits((prevState) => [...prevState, 0]);
-      } else if (writtenWord[i].toLowerCase() === selectedWord[i]) {
+        changeKeys(keys, letter, 0);
+      } else if (letter.toLowerCase() === selectedWord[i]) {
         setHits((prevState) => [...prevState, 1]);
-      } else if (selectedWord.includes(writtenWord[i].toLowerCase())) {
+        changeKeys(keys, letter, 1);
+      } else if (selectedWord.includes(letter.toLowerCase())) {
         setHits((prevState) => [...prevState, 2]);
-      }
+        changeKeys(keys, letter, 2);
+      } 
     });
   };
 
@@ -84,7 +105,7 @@ const LetterRow = ({
         ...prevState,
         keyboard: false,
       }));
-      const timetout = setTimeout(() => {
+      const timeout = setTimeout(() => {
         setHits([]);
         setState((prevState) => ({
           ...prevState,
@@ -93,18 +114,21 @@ const LetterRow = ({
           keyboard: true,
         }));
         setSelectedWord(words[Math.floor(Math.random() * words.length)]);
-        return () => clearTimeout(timetout);
+        setKeys([]);
       }, 2000);
+      return () => clearTimeout(timeout);
     };
     if (
+      !wordsWritten.includes(word.toUpperCase()) &&
       wordsWritten.length == difficultyRows[state.difficulty] &&
       wordsWritten.every((word) => word.length == 5)
     ) {
       setFailed(true);
       restartOnAllWordsWrong();
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setFailed(false);
       }, 1500);
+      return () => clearTimeout(timeout);
     }
   }, [wordsWritten]);
 
@@ -122,6 +146,7 @@ const LetterRow = ({
     <>
       <motion.div
         className="flex gap-2"
+        initial={{ scale: 1 }}
         variants={{ animate: { scale: [1.0, 1.2, 1.0] } }}
         transition={{ duration: 1, ease: "easeInOut", times: [0, 0.7, 1] }}
         animate={controller}

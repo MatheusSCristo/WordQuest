@@ -1,9 +1,10 @@
 "use client";
 
-import { StateContext } from "@/app/context/State";
+import { StateContext } from "@/app/context/StateContext";
 import FailedModal from "@/app/Modal/FailedModal";
 import words from "@/util/words";
-import { useContext, useState } from "react";
+import { motion, useAnimationControls } from "framer-motion";
+import { useContext, useEffect, useState } from "react";
 import { useReward } from "react-rewards";
 import Keyboard from "./components/Keyboard";
 import LetterRow from "./components/LetterRow";
@@ -27,11 +28,12 @@ const Play = () => {
   );
   const { state, setState } = useContext(StateContext);
   const [failed, setFailed] = useState(false);
+  const controller = useAnimationControls();
+
   const otherWords = [1, 2, 3, 4, 5, 6].slice(
     0,
     state.difficulty === 1 ? 6 : state.difficulty === 2 ? 4 : 3
   );
-
   const handleMenuClick = () => {
     setState((prevState) => ({
       ...prevState,
@@ -42,9 +44,13 @@ const Play = () => {
     }));
   };
 
+  useEffect(() => {
+    controller.start("animate");
+  }, [state.score]);
+
   return (
     <section className="w-full h-full flex flex-col">
-      {failed && <FailedModal/>}
+      {failed && <FailedModal />}
       <div className="flex justify-between items-center bg-gradient-to-r from-[#ECBB8F] to-[#866A51] bg-clip-text text-transparent">
         <div className="flex gap-2 items-baseline ">
           <button
@@ -57,7 +63,15 @@ const Play = () => {
           <h2 className="uppercase text-md">{difficulty[state.difficulty]}</h2>
         </div>
         <h1 className="text-[3em] leading-none">WORD QUEST</h1>
-        <h3 className="uppercase text-lg">{state.score} pontos</h3>
+        <motion.h3
+          initial={{ scale: 1 }}
+          variants={{ animate: { scale: [1, 1.2, 1] } }}
+          animate={controller}
+          transition={{ duration: 1, ease: "easeInOut", times: [0, 0.5, 1] }}
+          className="uppercase text-lg bg-gradient-to-r from-[#ECBB8F] to-[#866A51] bg-clip-text text-transparent"
+        >
+          {state.score} pontos
+        </motion.h3>
       </div>
       <div
         className="flex flex-col justify-center items-center mt-10 gap-2"
@@ -68,7 +82,7 @@ const Play = () => {
             word={selectedWord}
             index={index}
             setSelectedWord={setSelectedWord}
-            handleReward={()=>confettiReward()}
+            handleReward={() => confettiReward()}
             setFailed={setFailed}
           />
         ))}
