@@ -1,5 +1,5 @@
 "use client";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 
 export type State = {
   play: boolean;
@@ -8,7 +8,7 @@ export type State = {
   menu: boolean;
   credits: boolean;
   words: string[];
-  keyboard:boolean;
+  keyboard: boolean;
 };
 
 type stateContextType = {
@@ -18,16 +18,37 @@ type stateContextType = {
 
 const StateContext = createContext({} as stateContextType);
 
-export default function StateProvider({ children}:{children:ReactNode }) {
-  const [state, setState] = useState({
-    play: false,
-    difficulty: 1,
-    score: 0,
-    menu: true,
-    credits: false,
-    words:[""],
-    keyboard:true
-  });
+export default function StateProvider({ children }: { children: ReactNode }) {
+  const getLocalStorageState = () => {
+    if (typeof window !== "undefined") {
+      const localState = localStorage.getItem("state");
+      if (localState) {
+        return {
+          ...JSON.parse(localState),
+          keyboard: true,
+          play: false,
+          menu: true,
+        };
+      }
+    }
+    return {
+      play: false,
+      difficulty: 1,
+      score: 0,
+      menu: true,
+      credits: false,
+      words: [""],
+      keyboard: true,
+    };
+  };
+
+  const [state, setState] = useState(getLocalStorageState());
+
+  useEffect(() => {
+    if (typeof window !== "undefined")
+      localStorage.setItem("state", JSON.stringify(state));
+  }, [state]);
+
   return (
     <StateContext.Provider value={{ state, setState }}>
       {children}
