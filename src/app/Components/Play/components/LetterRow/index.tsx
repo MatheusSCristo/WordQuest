@@ -27,19 +27,20 @@ const LetterRow = ({
   setSelectedWord,
   handleReward,
   setFailed,
+  failed,
 }: {
   word: string;
   index: number;
   setSelectedWord: Dispatch<SetStateAction<string>>;
   handleReward: () => void;
   setFailed: Dispatch<SetStateAction<boolean>>;
+  failed: boolean;
 }) => {
   const controller = useAnimationControls();
   const { state, setState } = useContext(StateContext);
   const { keys, setKeys } = useContext(KeysContext);
   const [hits, setHits] = useState([] as number[]);
   const { words: wordsWritten } = state;
-
 
   const changeKeys = (letter: string, type: 0 | 1 | 2) => {
     const newKeys = [...keys];
@@ -54,7 +55,6 @@ const LetterRow = ({
     setKeys((prevState) => [...prevState, { key: letter, type: type }]);
     return;
   };
-
 
   const restartOnWordRight = () => {
     controller.start("animate");
@@ -112,11 +112,10 @@ const LetterRow = ({
 
   useEffect(() => {
     if (wordsWritten.includes(word.toUpperCase())) {
-      const timeout=setTimeout(() => {
+      const timeout = setTimeout(() => {
         setHits([]);
-        
       }, 2000);
-      return ()=>clearTimeout(timeout);
+      return () => clearTimeout(timeout);
     }
   }, [wordsWritten]);
 
@@ -145,7 +144,7 @@ const LetterRow = ({
       }, 2000);
       return () => clearTimeout(timeout);
     };
-    if (
+    if (!failed &&
       !wordsWritten.includes(word.toUpperCase()) &&
       wordsWritten.length == difficultyRows[state.difficulty] &&
       wordsWritten.every((word) => word.length == 5)
@@ -157,7 +156,14 @@ const LetterRow = ({
       }, 1500);
       return () => clearTimeout(timeout);
     }
-  }, [wordsWritten]);
+    if (failed) {
+      restartOnAllWordsWrong();
+      const timeout = setTimeout(() => {
+        setFailed(false);
+      }, 1500);
+      return () => clearTimeout(timeout);
+    }
+  }, [wordsWritten,failed]);
 
   useEffect(() => {
     if (wordsWritten[index] && wordsWritten[index].length == 5) {

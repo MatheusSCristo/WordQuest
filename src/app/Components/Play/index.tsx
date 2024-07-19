@@ -6,6 +6,7 @@ import words from "@/util/words";
 import { motion, useAnimationControls } from "framer-motion";
 import { useContext, useEffect, useState } from "react";
 import { useReward } from "react-rewards";
+import Clock from "./components/Clock";
 import Keyboard from "./components/Keyboard";
 import LetterRow from "./components/LetterRow";
 
@@ -28,6 +29,24 @@ const Play = () => {
   );
   const { state, setState } = useContext(StateContext);
   const [failed, setFailed] = useState(false);
+  const [time, setTime] = useState(180);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime((time) => (time > 0 ? time - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (time === 0) {
+      setFailed(true);
+      setTimeout(() => {
+        setTime(180);
+      }, 2000);
+    }
+  }, [time]);
+
   const controller = useAnimationControls();
 
   const otherWords = [1, 2, 3, 4, 5, 6].slice(
@@ -49,7 +68,7 @@ const Play = () => {
   }, [state.score]);
 
   return (
-    <section className="w-full h-full flex flex-col">
+    <section className="w-full h-full flex flex-col relative">
       {failed && <FailedModal />}
       <div className="flex justify-between items-center bg-gradient-to-r from-[#ECBB8F] to-[#866A51] bg-clip-text text-transparent">
         <div className="flex gap-2 items-baseline ">
@@ -62,7 +81,9 @@ const Play = () => {
           <h2 className="uppercase text-lg ">Dificuldade:</h2>
           <h2 className="uppercase text-md">{difficulty[state.difficulty]}</h2>
         </div>
-        <h1 className="text-[3em] leading-none">WORD QUEST</h1>
+        <h1 className="text-[3em] leading-none absolute top-0 left-1/2  -translate-x-1/2 bg-gradient-to-r from-[#ECBB8F] to-[#866A51] bg-clip-text text-transparent">
+          WORD QUEST
+        </h1>
         <motion.h3
           initial={{ scale: 1 }}
           variants={{ animate: { scale: [1, 1.2, 1] } }}
@@ -84,10 +105,12 @@ const Play = () => {
             setSelectedWord={setSelectedWord}
             handleReward={() => confettiReward()}
             setFailed={setFailed}
+            failed={failed}
           />
         ))}
       </div>
       <Keyboard />
+      <Clock time={time} />
     </section>
   );
 };
