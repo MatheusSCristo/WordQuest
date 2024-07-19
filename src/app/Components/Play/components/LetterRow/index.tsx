@@ -28,6 +28,8 @@ const LetterRow = ({
   handleReward,
   setFailed,
   failed,
+  restartTime,
+  restart,
 }: {
   word: string;
   index: number;
@@ -35,6 +37,8 @@ const LetterRow = ({
   handleReward: () => void;
   setFailed: Dispatch<SetStateAction<boolean>>;
   failed: boolean;
+  restartTime: () => void;
+  restart: boolean;
 }) => {
   const controller = useAnimationControls();
   const { state, setState } = useContext(StateContext);
@@ -56,6 +60,10 @@ const LetterRow = ({
     return;
   };
 
+  useEffect(() => {
+    console.log(word);
+  }, [word]);
+
   const restartOnWordRight = () => {
     controller.start("animate");
     setState((prevState: State) => ({
@@ -73,6 +81,8 @@ const LetterRow = ({
       }));
       setSelectedWord(words[Math.floor(Math.random() * words.length)]);
       setKeys([]);
+      restartTime();
+      setFailed(false);
       return () => clearTimeout(timetout);
     }, 2000);
   };
@@ -125,51 +135,50 @@ const LetterRow = ({
     }
   }, [hits]);
 
-  useEffect(() => {
-    const restartOnAllWordsWrong = () => {
+  const restartOnAllWordsWrong = () => {
+    setState((prevState) => ({
+      ...prevState,
+      keyboard: false,
+    }));
+    const timeout = setTimeout(() => {
+      setHits([]);
       setState((prevState) => ({
         ...prevState,
-        keyboard: false,
+        score: state.score != 0 ? state.score - 1 : 0,
+        words: [],
+        keyboard: true,
       }));
-      const timeout = setTimeout(() => {
-        setHits([]);
-        setState((prevState) => ({
-          ...prevState,
-          score: state.score != 0 ? state.score - 1 : 0,
-          words: [],
-          keyboard: true,
-        }));
-        setSelectedWord(words[Math.floor(Math.random() * words.length)]);
-        setKeys([]);
-      }, 2000);
-      return () => clearTimeout(timeout);
-    };
-    if (!failed &&
+      setSelectedWord(words[Math.floor(Math.random() * words.length)]);
+      setKeys([]);
+      restartTime();
+      setFailed(false);
+    }, 2000);
+    return () => clearTimeout(timeout);
+  };
+  useEffect(() => {
+    if (
       !wordsWritten.includes(word.toUpperCase()) &&
       wordsWritten.length == difficultyRows[state.difficulty] &&
-      wordsWritten.every((word) => word.length == 5)
+      wordsWritten.every((word) => word.length == 5) &&
+      hits.every((value) => value != 1)
     ) {
       setFailed(true);
       restartOnAllWordsWrong();
-      const timeout = setTimeout(() => {
-        setFailed(false);
-      }, 1500);
-      return () => clearTimeout(timeout);
     }
-    if (failed) {
-      restartOnAllWordsWrong();
-      const timeout = setTimeout(() => {
-        setFailed(false);
-      }, 1500);
-      return () => clearTimeout(timeout);
-    }
-  }, [wordsWritten,failed]);
+  }, [wordsWritten, failed]);
 
   useEffect(() => {
     if (wordsWritten[index] && wordsWritten[index].length == 5) {
       handleEnterWord();
     }
   }, [wordsWritten[index]]);
+
+  useEffect(() => {
+    if (restart) {
+      setFailed(true);
+      restartOnAllWordsWrong();
+    }
+  }, [restart]);
 
   return (
     <>

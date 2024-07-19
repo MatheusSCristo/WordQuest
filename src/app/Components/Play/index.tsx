@@ -29,7 +29,9 @@ const Play = () => {
   );
   const { state, setState } = useContext(StateContext);
   const [failed, setFailed] = useState(false);
-  const [time, setTime] = useState(180);
+  const [time, setTime] = useState(5);
+  const [restart,setRestart]=useState(false);
+  const score=state.score;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -40,7 +42,7 @@ const Play = () => {
 
   useEffect(() => {
     if (time === 0) {
-      setFailed(true);
+      setRestart(true);
       setTimeout(() => {
         setTime(180);
       }, 2000);
@@ -106,6 +108,8 @@ const Play = () => {
             handleReward={() => confettiReward()}
             setFailed={setFailed}
             failed={failed}
+            restartTime={() => setTime(180)}
+            restart={restart}
           />
         ))}
       </div>
