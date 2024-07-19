@@ -40,20 +40,21 @@ const LetterRow = ({
   const [hits, setHits] = useState([] as number[]);
   const { words: wordsWritten } = state;
 
-  const changeKeys = (
-    prevState: typeof keys,
-    letter: string,
-    type: 0 | 1 | 2
-  ) => {
-    const newKeys = [...prevState];
+
+  const changeKeys = (letter: string, type: 0 | 1 | 2) => {
+    const newKeys = [...keys];
     const index = newKeys.findIndex((item) => item.key === letter);
     if (index != -1) {
-      newKeys[index].type = type;
-      return;
+      if (newKeys[index].type !== 1) {
+        newKeys[index].type = type;
+        setKeys(newKeys);
+        return;
+      }
     }
     setKeys((prevState) => [...prevState, { key: letter, type: type }]);
     return;
   };
+
 
   const restartOnWordRight = () => {
     controller.start("animate");
@@ -77,21 +78,47 @@ const LetterRow = ({
   };
 
   const handleEnterWord = () => {
-    const writtenWord = wordsWritten[index].split("");
-    const selectedWord = word.split("");
-    writtenWord.forEach((letter, i) => {
-      if (!selectedWord.includes(letter.toLowerCase())) {
-        setHits((prevState) => [...prevState, 0]);
-        changeKeys(keys, letter, 0);
-      } else if (letter.toLowerCase() === selectedWord[i]) {
-        setHits((prevState) => [...prevState, 1]);
-        changeKeys(keys, letter, 1);
-      } else if (selectedWord.includes(letter.toLowerCase())) {
-        setHits((prevState) => [...prevState, 2]);
-        changeKeys(keys, letter, 2);
-      } 
+    const writtenLetters = wordsWritten[index].toLowerCase().split("");
+    const selectedLetters = word.split("");
+    let remainingSelectedLetters = selectedLetters;
+    let remainingWrittenLetters = writtenLetters;
+    const newHits: number[] = [];
+    writtenLetters.forEach((letter, i) => {
+      if (letter == selectedLetters[i]) {
+        changeKeys(letter, 1);
+        newHits[i] = 1;
+        remainingSelectedLetters[i] = "";
+        remainingWrittenLetters[i] = "";
+      }
     });
+    remainingWrittenLetters.forEach((letter, i) => {
+      if (letter !== "") {
+        const index = remainingSelectedLetters.findIndex(
+          (item) => item == letter
+        );
+        if (index != -1) {
+          remainingSelectedLetters[index] = "";
+          remainingWrittenLetters[i] = "";
+          newHits[i] = 2;
+          changeKeys(letter, 2);
+        } else {
+          changeKeys(letter, 0);
+          newHits[i] = 0;
+        }
+      }
+    });
+    setHits((prevState) => [...prevState, ...newHits]);
   };
+
+  useEffect(() => {
+    if (wordsWritten.includes(word.toUpperCase())) {
+      const timeout=setTimeout(() => {
+        setHits([]);
+        
+      }, 2000);
+      return ()=>clearTimeout(timeout);
+    }
+  }, [wordsWritten]);
 
   useEffect(() => {
     if (hits.length === 5 && hits.every((value) => value == 1)) {
@@ -131,10 +158,6 @@ const LetterRow = ({
       return () => clearTimeout(timeout);
     }
   }, [wordsWritten]);
-
-  useEffect(() => {
-    console.log(word);
-  }, [word]);
 
   useEffect(() => {
     if (wordsWritten[index] && wordsWritten[index].length == 5) {

@@ -36,11 +36,12 @@ const Keyboard = () => {
   };
 
   const checkTypesOfKeysPressed = (letter: string) => {
-    if (!keys.find((item) => item.key == letter)) return "bg-secondary";
-    if (keys.find((item) => item.key == letter)?.type == 0) return "bg-red-500 opacity-[0.5]";
-    if (keys.find((item) => item.key == letter)?.type == 1)
+    const lowerCaseLetter=letter.toLowerCase();
+    if (!keys.find((item) => item.key == lowerCaseLetter)) return "bg-secondary";
+    if (keys.find((item) => item.key == lowerCaseLetter)?.type == 0) return "bg-red-500 opacity-[0.5]";
+    if (keys.find((item) => item.key == lowerCaseLetter)?.type == 1)
       return "bg-green-500";
-    if (keys.find((item) => item.key == letter)?.type == 2)
+    if (keys.find((item) => item.key == lowerCaseLetter)?.type == 2)
       return "bg-yellow-500";
   };
   return (

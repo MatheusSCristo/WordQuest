@@ -19,10 +19,10 @@ export default function KeysProvider({ children }: { children: React.ReactNode }
 
 
   useEffect(()=>{
-    if(state.play ){
+    if(state.play){
       setKeys([])
     }
-  },[state])
+  },[state.play])
 
   return (
     <KeysContext.Provider value={{ keys, setKeys }}>
