@@ -55,7 +55,7 @@ const Keyboard = () => {
                 onClick={() => handleClicks(letter)}
                 className={`${checkTypesOfKeysPressed(
                   letter
-                )} hover:scale-105 disable:opacity-[0.7] duration-300 active:bg-[#362323] border border-white rounded-sm w-[7vw] h-[10vh] xl:w-[3vw] xl:h-[7vh] text-white text-lg flex items-center justify-center`}
+                )} hover:scale-105 disable:opacity-[0.7] duration-300 active:bg-[#362323] border border-white rounded-sm w-[7vw] h-[8vh] xl:w-[3vw] xl:h-[7vh] text-white text-lg flex items-center justify-center`}
               >
                 {letter}
               </button>
@@ -63,7 +63,7 @@ const Keyboard = () => {
               <button key={letter}
                 onClick={handleDelete}
                 disabled={!state.keyboard}
-                className="relative hover:scale-105 disable:opacity-[0.7] duration-300 active:bg-[#362323] border border-white rounded-sm bg-secondary w-[7vw] h-[10vh] xl:w-[4vw] xl:h-[7vh] text-white text-lg flex items-center justify-center  "
+                className="relative hover:scale-105 disable:opacity-[0.7] duration-300 active:bg-[#362323] border border-white rounded-sm bg-secondary px-1 w-[8vw] h-[8vh] xl:w-[4vw] xl:h-[7vh] text-white text-lg flex items-center justify-center  "
               >
                 <Image
                   src={"/icons/delete.svg"}

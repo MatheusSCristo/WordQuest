@@ -31,7 +31,6 @@ const Play = () => {
   const [failed, setFailed] = useState(false);
   const [time, setTime] = useState(180);
   const [restart, setRestart] = useState(false);
-  const score = state.score;
 
   useEffect(() => {
     const interval = setInterval(() => {
