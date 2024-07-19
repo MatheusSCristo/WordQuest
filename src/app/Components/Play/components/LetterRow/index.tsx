@@ -60,10 +60,6 @@ const LetterRow = ({
     return;
   };
 
-  useEffect(() => {
-    console.log(word);
-  }, [word]);
-
   const restartOnWordRight = () => {
     controller.start("animate");
     setState((prevState: State) => ({

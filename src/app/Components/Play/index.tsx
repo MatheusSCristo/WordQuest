@@ -30,8 +30,8 @@ const Play = () => {
   const { state, setState } = useContext(StateContext);
   const [failed, setFailed] = useState(false);
   const [time, setTime] = useState(5);
-  const [restart,setRestart]=useState(false);
-  const score=state.score;
+  const [restart, setRestart] = useState(false);
+  const score = state.score;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -102,6 +102,7 @@ const Play = () => {
       >
         {otherWords.map((item, index) => (
           <LetterRow
+            key={item}
             word={selectedWord}
             index={index}
             setSelectedWord={setSelectedWord}

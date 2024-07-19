@@ -46,11 +46,11 @@ const Keyboard = () => {
   };
   return (
     <div className="flex flex-col justify-center items-center flex-1 gap-2">
-      {letters.map((row) => (
-        <div className="flex gap-2">
+      {letters.map((row,i) => (
+        <div className="flex gap-2" key={row[i]+"1"}>
           {row.map((letter) =>
             letter != "*" ? (
-              <button
+              <button key={letter}
                 disabled={!state.keyboard}
                 onClick={() => handleClicks(letter)}
                 className={`${checkTypesOfKeysPressed(
@@ -60,7 +60,7 @@ const Keyboard = () => {
                 {letter}
               </button>
             ) : (
-              <button
+              <button key={letter}
                 onClick={handleDelete}
                 disabled={!state.keyboard}
                 className="relative hover:scale-105 disable:opacity-[0.7] duration-300 active:bg-[#362323] border border-white rounded-sm bg-secondary w-[4vw] h-[7vh] text-white text-lg flex items-center justify-center  "
