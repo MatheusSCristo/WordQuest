@@ -10,9 +10,9 @@ const CreditsModal = ({ closeMenu }: { closeMenu: () => void }) => {
         >
           X
         </span>
-        <h1 className="text-3xl">Olá, bem vindo ao Word Quest!</h1>
+        <h1 className="text-xl xl:text-3xl text-center text-wrap">Olá, bem vindo ao Word Quest!</h1>
         <div className="flex flex-col items-center gap-2">
-          <p className="text-2xl text-center">
+          <p className="xl:text-2xl text-center">
             Este jogo foi inspirado no jogo
             <Link
               href={"https://term.ooo/"}
@@ -22,7 +22,7 @@ const CreditsModal = ({ closeMenu }: { closeMenu: () => void }) => {
               Termo.
             </Link>
           </p>
-          <p className="text-center text-xl">
+          <p className="text-center xl:text-xl">
             O objetivo do jogo é descobrir a palavra da rodada. A cada nível a
             dificuldade aumenta, e a quantidade de tentativas diminui. Porém,
             quanto maior a dificuldade, maior a recompensa.

@@ -29,7 +29,7 @@ const Play = () => {
   );
   const { state, setState } = useContext(StateContext);
   const [failed, setFailed] = useState(false);
-  const [time, setTime] = useState(5);
+  const [time, setTime] = useState(180);
   const [restart, setRestart] = useState(false);
   const score = state.score;
 
@@ -73,17 +73,21 @@ const Play = () => {
     <section className="w-full h-full flex flex-col relative">
       {failed && <FailedModal />}
       <div className="flex justify-between items-center bg-gradient-to-r from-[#ECBB8F] to-[#866A51] bg-clip-text text-transparent">
-        <div className="flex gap-2 items-baseline ">
+        <div className="flex flex-col xl:flex-row gap-2 items-baseline ">
           <button
             onClick={handleMenuClick}
-            className="bg-gradient-to-r from-[#ECBB8F] to-[#866A51] text-white px-3 py-2 border border-white hover:scale-105 rounded-sm text-lg duration-300"
+            className="bg-gradient-to-r from-[#ECBB8F] to-[#866A51] text-white px-3 py-2 border border-white hover:scale-105 rounded-sm xl:text-lg duration-300"
           >
             Menu
           </button>
-          <h2 className="uppercase text-lg ">Dificuldade:</h2>
-          <h2 className="uppercase text-md">{difficulty[state.difficulty]}</h2>
+          <div className="flex items-baseline gap-2">
+            <h2 className="uppercase xl:text-lg ">Dificuldade:</h2>
+            <h2 className="uppercase xl:text-md ">
+              {difficulty[state.difficulty]}
+            </h2>
+          </div>
         </div>
-        <h1 className="text-[3em] leading-none absolute top-0 left-1/2  -translate-x-1/2 bg-gradient-to-r from-[#ECBB8F] to-[#866A51] bg-clip-text text-transparent">
+        <h1 className="text-2xl xl:text-[3em] leading-none absolute top-0 left-1/2  -translate-x-1/2 bg-gradient-to-r from-[#ECBB8F] to-[#866A51] bg-clip-text text-transparent">
           WORD QUEST
         </h1>
         <motion.h3
@@ -97,7 +101,7 @@ const Play = () => {
         </motion.h3>
       </div>
       <div
-        className="flex flex-col justify-center items-center mt-10 gap-2"
+        className="flex flex-col justify-center items-center mt-2 xl:mt-10 gap-2"
         id="confettiReward"
       >
         {otherWords.map((item, index) => (
