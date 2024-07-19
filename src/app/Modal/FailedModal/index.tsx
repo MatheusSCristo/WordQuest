@@ -6,7 +6,6 @@ const FailedModal = () => {
             <h1 className="text-2xl">Errou, reiniciando...</h1>
             <h2 className="text-xl">Você perdeu 1 ponto!</h2>
         </div>
-        
     </div>
   )
 }

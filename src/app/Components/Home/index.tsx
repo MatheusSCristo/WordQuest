@@ -1,5 +1,6 @@
 "use client";
 import { StateContext } from "@/app/context/StateContext";
+import CreditsModal from "@/app/Modal/CreditsModal";
 import { motion, useAnimationControls } from "framer-motion";
 import { useContext } from "react";
 
@@ -27,13 +28,20 @@ const Home = () => {
   };
 
   const handleCredits = () => {
-    setState({ ...state, credits: true, menu: false });
+    setState({ ...state, credits: true });
   };
 
   return (
     <section className="flex flex-col items-center w-full">
+      {state.credits && (
+        <CreditsModal
+          closeMenu={() =>
+            setState((prevState) => ({ ...prevState, credits: false }))
+          }
+        />
+      )}
       <h3 className="uppercase bg-gradient-to-r from-[#ECBB8F] to-[#866A51] bg-clip-text text-transparent self-end">
-        {state.score} {state.score >1 ? "pontos":"ponto"}
+        {state.score} {state.score > 1 ? "pontos" : "ponto"}
       </h3>
       <div className="text-center flex flex-col uppercase bg-gradient-to-r from-[#ECBB8F] to-[#866A51] bg-clip-text text-transparent text-[4em] leading-none mt-10">
         <h1>WORD</h1>
